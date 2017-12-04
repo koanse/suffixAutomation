@@ -94,13 +94,14 @@ namespace SuffixAutomation
 		}
 
 		// Заполнение массива counts для подсчета всех вхождений подстроки
-		private static void CalculateAllAccurences(string pattern)
+		private static void CalculateAllOccurences(string pattern)
 		{
-			for (var i = 1; i < lastIndex; i++)
+			for (var i = 1; i < size; i++)
 			{
 				counts[i] = 1;
 			}
 
+			vertexIndexesByLength = vertexIndexesByLength.OrderByDescending(x => x.Item1).ToList();
 			vertexIndexesByLength.Reverse();
 			foreach (var b in vertexIndexesByLength)
 			{
@@ -115,15 +116,15 @@ namespace SuffixAutomation
 				var key = (char)(pattern[patternIndex] - 'a');
 				if (!states[index].Next.TryGetValue(key, out index))
 				{
-					states[index].Next.Add(key, 0);
-					index = 0;
+					//states[index].Next.Add(key, 1);
+					//index = 1;
 				}
 				patternIndex++;
 			}
 		}
 
 		// Подсчет числа вхождений подстроки
-		private static int GetAllAccurencesCount(string pattern)
+		private static int GetAllOccurencesCount(string pattern)
 		{
 			var count = 0;
 			var index = 0;
@@ -170,7 +171,7 @@ namespace SuffixAutomation
 			Console.WriteLine("Введите подстроку для расчета числа вхождений:");
 			Console.WriteLine("Введите подстроку для расчета числа вхождений:");
 			var pattern = Console.ReadLine();
-			CalculateAllAccurences(pattern);
+			CalculateAllOccurences(pattern);
 
 			var count = GetAllAccurencesCount(pattern);
 			Console.WriteLine("Число вхождений подстроки в основную строку: {0}", count);

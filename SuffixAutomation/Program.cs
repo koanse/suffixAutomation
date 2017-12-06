@@ -96,31 +96,35 @@ namespace SuffixAutomation
 		// Заполнение массива counts для подсчета всех вхождений подстроки
 		private static void CalculateAllOccurences(string pattern)
 		{
-			for (var i = 1; i < size; i++)
+			for (var i = 0; i < size; i++)
 			{
-				counts[i] = 1;
+				counts[i] = GetAllSubstrings(i).Count();
 			}
+		}
 
-			vertexIndexesByLength = vertexIndexesByLength.OrderByDescending(x => x.Item1).ToList();
-			vertexIndexesByLength.Reverse();
-			foreach (var b in vertexIndexesByLength)
+		private static List<string> GetAllSubstrings(int index)
+		{
+			var currentState = states[index];
+			var result = new List<string>();
+			foreach (var next in currentState.Next)
 			{
-				counts[states[b.Item2].Link] += counts[b.Item2];
-			}
+				var nextIndex = next.Value;
+				var nextChar = next.Key;
 
-			var index = 0;
-			var patternIndex = 0;
+				var subStrings = GetAllSubstrings(nextIndex);
 
-			while (patternIndex <= pattern.Length - 1)
-			{
-				var key = (char)(pattern[patternIndex] - 'a');
-				if (!states[index].Next.TryGetValue(key, out index))
+				foreach (var str in subStrings)
 				{
-					//states[index].Next.Add(key, 1);
-					//index = 1;
+					result.Add(nextChar + str);
 				}
-				patternIndex++;
 			}
+
+			if (!result.Any())
+			{
+				result.Add(string.Empty);
+			}
+
+			return result.Distinct().ToList();
 		}
 
 		// Подсчет числа вхождений подстроки
@@ -128,11 +132,13 @@ namespace SuffixAutomation
 		{
 			var count = 0;
 			var index = 0;
+			var nextIndex = 0;
 			var state = states[0];
 			foreach (var c in pattern)
 			{
-				if (state.Next.TryGetValue(c, out index))
+				if (state.Next.TryGetValue(c, out nextIndex))
 				{
+					index = nextIndex;
 					state = states[index];
 				}
 				else
@@ -141,9 +147,7 @@ namespace SuffixAutomation
 				}
 			}
 
-			var cntCopy = counts.ToList();
-			cntCopy.RemoveAt(0);
-			return cntCopy.Max();
+			return counts[index];
 		}
 
 		static void Main(string[] args)
@@ -151,6 +155,9 @@ namespace SuffixAutomation
 			Console.WriteLine("Построение суффиксного автомата и расчет всех вхождений подстроки P за O(|P|)");
 			Console.WriteLine("Введите строку для построения автомата:");
 			var mainString = Console.ReadLine();
+
+			//mainString = "dffdgmlndf,mgndf,gnfd,jgndfkjfdlkgfh.lfghdffgf"; (поиск gn)
+
 			InitSuffixAutomation();
 			foreach (var c in mainString)
 			{
@@ -173,7 +180,8 @@ namespace SuffixAutomation
 			var pattern = Console.ReadLine();
 			CalculateAllOccurences(pattern);
 
-			var count = GetAllAccurencesCount(pattern);
+			var count = GetAllOccurencesCount(pattern);
+
 			Console.WriteLine("Число вхождений подстроки в основную строку: {0}", count);
 			Console.ReadLine();
 		}

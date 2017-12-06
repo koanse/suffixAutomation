@@ -154,9 +154,7 @@ namespace SuffixAutomation
 		{
 			Console.WriteLine("Построение суффиксного автомата и расчет всех вхождений подстроки P за O(|P|)");
 			Console.WriteLine("Введите строку для построения автомата:");
-			var mainString = Console.ReadLine();
-
-			//mainString = "dffdgmlndf,mgndf,gnfd,jgndfkjfdlkgfh.lfghdffgf"; (поиск gn)
+			var mainString = Console.ReadLine() + Environment.NewLine;
 
 			InitSuffixAutomation();
 			foreach (var c in mainString)
@@ -176,11 +174,11 @@ namespace SuffixAutomation
 			}
 
 			Console.WriteLine("Введите подстроку для расчета числа вхождений:");
-			Console.WriteLine("Введите подстроку для расчета числа вхождений:");
 			var pattern = Console.ReadLine();
 			CalculateAllOccurences(pattern);
 
 			var count = GetAllOccurencesCount(pattern);
+			//var substr = string.Join(Environment.NewLine, GetAllSubstrings(0));
 
 			Console.WriteLine("Число вхождений подстроки в основную строку: {0}", count);
 			Console.ReadLine();
